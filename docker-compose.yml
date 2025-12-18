@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  fot-api:
+    build:
+      context: ./fot
+      dockerfile: Dockerfile
+    container_name: fot-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    networks:
+      - fot-network
+
+  fot-tests:
+    image: maven:3.9-eclipse-temurin-17
+    container_name: fot-tests
+    working_dir: /app
+    volumes:
+      - ./fot:/app
+    command: mvn test
+    networks:
+      - fot-network
+    profiles:
+      - test
+
+networks:
+  fot-network:
+    driver: bridge
