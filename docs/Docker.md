@@ -3,7 +3,6 @@
 > **📚 Documentação Completa:**
 > - **[README.md](README.md)** - Arquitetura e Fluxo de Dados
 > - **[Docker.md](Docker.md)** - Guia de Docker e Containers (você está aqui)
-> - **[Development.md](Development.md)** - Guia de Desenvolvimento
 
 Este guia explica como executar a aplicação Flight On Time e seus testes usando Docker.
 
