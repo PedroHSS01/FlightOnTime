@@ -325,14 +325,14 @@ docker image prune -a
 O sistema utiliza arquitetura de múltiplos containers:
 
 ```
-┌─────────────────┐      ┌─────────────────┐      ┌─────────────────┐
-│   fot-api       │─────>│   ml-wrapper    │─────>│  ml-service     │
-│  (Java/Spring)  │      │  (Flask/Python) │      │   (Mock/Real)   │
-│   Port: 8080    │      │   Port: 5000    │      │   Port: 8000    │
-└─────────────────┘      └─────────────────┘      └─────────────────┘
-        │                        │                        │
-        └────────────────────────┴────────────────────────┘
-                          fot-network
+┌─────────────────┐       ┌─────────────────┐       ┌─────────────────┐
+│   fot-api       │──────>│   ml-wrapper    │──────>│  ml-service     │
+│  (Java/Spring)  │       │  (Flask/Python) │       │   (Mock/Real)   │
+│   Port: 8080    │       │   Port: 5000    │       │   Port: 8000    │
+└─────────────────┘       └─────────────────┘       └─────────────────┘
+        │                         │                         │
+        └─────────────────────────┴─────────────────────────┘
+                            fot-network
 ```
 
 ### Dockerfile (Multi-stage Build)
