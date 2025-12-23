@@ -28,8 +28,11 @@ class TestPredictEndpoint:
             "probability": 0.85
         }
 
-        with patch('app.routes.prediction_routes.ml_client.predict') as mock_predict:
-            mock_predict.return_value = mock_response
+        # Mock the get_client function to return a mock client
+        with patch('app.routes.prediction_routes.get_client') as mock_get_client:
+            mock_ml_client = MagicMock()
+            mock_ml_client.predict.return_value = mock_response
+            mock_get_client.return_value = mock_ml_client
 
             response = client.post('/predict', json={
                 "flightNumber": "AA1234",
@@ -43,12 +46,16 @@ class TestPredictEndpoint:
             assert response.status_code == 200
             data = response.get_json()
             assert data['prediction'] == 1
-            assert data['probability'] == 0.85
+            assert data['confidence'] == 0.85  # Fixed: should be 'confidence' not 'probability'
 
     def test_predict_empty_body(self, client):
         """Test prediction with empty request body"""
 
-        response = client.post('/predict', json=None)
+        response = client.post(
+            '/predict',
+            data='',
+            content_type='application/json'
+        )
 
         assert response.status_code == 400
         data = response.get_json()
@@ -89,8 +96,10 @@ class TestPredictEndpoint:
     def test_predict_ml_service_error(self, client):
         """Test prediction when ML service fails"""
 
-        with patch('app.routes.prediction_routes.ml_client.predict') as mock_predict:
-            mock_predict.side_effect = Exception("ML service unavailable")
+        with patch('app.routes.prediction_routes.get_client') as mock_get_client:
+            mock_ml_client = MagicMock()
+            mock_ml_client.predict.side_effect = Exception("ML service unavailable")
+            mock_get_client.return_value = mock_ml_client
 
             response = client.post('/predict', json={
                 "flightNumber": "AA1234",
@@ -113,8 +122,10 @@ class TestPredictEndpoint:
             "probability": 0.92
         }
 
-        with patch('app.routes.prediction_routes.ml_client.predict') as mock_predict:
-            mock_predict.return_value = mock_response
+        with patch('app.routes.prediction_routes.get_client') as mock_get_client:
+            mock_ml_client = MagicMock()
+            mock_ml_client.predict.return_value = mock_response
+            mock_get_client.return_value = mock_ml_client
 
             response = client.post('/predict', json={
                 "flightNumber": "AA1234",
@@ -127,7 +138,7 @@ class TestPredictEndpoint:
 
             assert response.status_code == 200
             # Verify that the mock was called with uppercase codes
-            called_data = mock_predict.call_args[0][0]
+            called_data = mock_ml_client.predict.call_args[0][0]
             assert called_data['companyName'] == 'AA'
             assert called_data['flightOrigin'] == 'JFK'
             assert called_data['flightDestination'] == 'LAX'
@@ -144,8 +155,10 @@ class TestHealthEndpoint:
             "ml_service": "OK"
         }
 
-        with patch('app.routes.prediction_routes.ml_client.health_check') as mock_health:
-            mock_health.return_value = mock_status
+        with patch('app.routes.prediction_routes.get_client') as mock_get_client:
+            mock_ml_client = MagicMock()
+            mock_ml_client.health_check.return_value = mock_status
+            mock_get_client.return_value = mock_ml_client
 
             response = client.get('/health')
 
@@ -162,8 +175,10 @@ class TestHealthEndpoint:
             "ml_service": "Connection refused"
         }
 
-        with patch('app.routes.prediction_routes.ml_client.health_check') as mock_health:
-            mock_health.return_value = mock_status
+        with patch('app.routes.prediction_routes.get_client') as mock_get_client:
+            mock_ml_client = MagicMock()
+            mock_ml_client.health_check.return_value = mock_status
+            mock_get_client.return_value = mock_ml_client
 
             response = client.get('/health')
 
@@ -174,8 +189,10 @@ class TestHealthEndpoint:
     def test_health_check_exception(self, client):
         """Test health check when an exception occurs"""
 
-        with patch('app.routes.prediction_routes.ml_client.health_check') as mock_health:
-            mock_health.side_effect = Exception("Unexpected error")
+        with patch('app.routes.prediction_routes.get_client') as mock_get_client:
+            mock_ml_client = MagicMock()
+            mock_ml_client.health_check.side_effect = Exception("Unexpected error")
+            mock_get_client.return_value = mock_ml_client
 
             response = client.get('/health')
 

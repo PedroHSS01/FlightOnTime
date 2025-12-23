@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 import logging
 from app.config import Config
+from app.middleware import log_request, log_response
 
 
 def create_app():
@@ -20,9 +21,13 @@ def create_app():
         r"/*": {
             "origins": ["http://localhost:8080", "http://localhost:*"],
             "methods": ["GET", "POST", "OPTIONS"],
-            "allow_headers": ["Content-Type"]
+            "allow_headers": ["Content-Type", "X-Correlation-ID"]
         }
     })
+
+    # Register middleware for request/response logging
+    app.before_request(log_request)
+    app.after_request(log_response)
 
     logger = logging.getLogger(__name__)
     logger.info("Initializing Flask ML Wrapper...")

@@ -1,12 +1,22 @@
 import requests
 from typing import Dict, Any
 from app.config import Config
+from app.services.ml_client_interface import IMLServiceClient
+from app.exceptions import (
+    MLServiceTimeoutError,
+    MLServiceConnectionError,
+    MLServiceHTTPError,
+    MLServiceError
+)
 import logging
+import time
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 logger = logging.getLogger(__name__)
 
 
-class MLServiceClient:
+class MLServiceClient(IMLServiceClient):
     """
     HTTP client for communication with external ML service
 
@@ -17,7 +27,21 @@ class MLServiceClient:
     def __init__(self):
         self.ml_service_url = Config.ML_SERVICE_URL
         self.timeout = Config.ML_SERVICE_TIMEOUT
+
+        # Configure session with retry strategy
+        self.session = requests.Session()
+        retry_strategy = Retry(
+            total=3,  # Total retry attempts
+            backoff_factor=1,  # Wait 1, 2, 4 seconds between retries
+            status_forcelist=[429, 500, 502, 503, 504],  # Retry on these HTTP codes
+            allowed_methods=["POST", "GET"]
+        )
+        adapter = HTTPAdapter(max_retries=retry_strategy)
+        self.session.mount("http://", adapter)
+        self.session.mount("https://", adapter)
+
         logger.info(f"MLServiceClient configured for: {self.ml_service_url}")
+        logger.info("Retry strategy: 3 attempts with exponential backoff")
 
     def predict(self, flight_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -50,13 +74,20 @@ class MLServiceClient:
                 f"Sending request to ML service: {flight_data.get('flightNumber')}"
             )
 
-            # Make HTTP POST request to ML service
-            response = requests.post(
+            # Track performance
+            start_time = time.time()
+
+            # Make HTTP POST request to ML service with retry
+            response = self.session.post(
                 self.ml_service_url,
                 json=flight_data,
                 headers={'Content-Type': 'application/json'},
                 timeout=self.timeout
             )
+
+            # Calculate response time
+            elapsed_time = time.time() - start_time
+            logger.info(f"ML service responded in {elapsed_time:.2f}s")
 
             # Check if request was successful
             response.raise_for_status()
@@ -73,22 +104,25 @@ class MLServiceClient:
             return result
 
         except requests.exceptions.Timeout:
-            logger.error("Timeout connecting to ML service")
-            raise Exception("ML service did not respond in time")
+            logger.error(f"Timeout connecting to ML service after {self.timeout}s")
+            raise MLServiceTimeoutError()
 
-        except requests.exceptions.ConnectionError:
-            logger.error("Connection error with ML service")
-            raise Exception("Could not connect to ML service")
+        except requests.exceptions.ConnectionError as e:
+            logger.error(f"Connection error with ML service: {str(e)}")
+            raise MLServiceConnectionError()
 
         except requests.exceptions.HTTPError as e:
             logger.error(
                 f"HTTP error from ML service: {e.response.status_code}")
             error_detail = e.response.json() if e.response.content else {}
-            raise Exception(f"Error in ML service: {error_detail}")
+            raise MLServiceHTTPError(
+                f"ML service error: {error_detail}",
+                status_code=e.response.status_code
+            )
 
         except Exception as e:
             logger.error(f"Unexpected error calling ML service: {str(e)}")
-            raise
+            raise MLServiceError(str(e))
 
     def health_check(self) -> Dict[str, Any]:
         """

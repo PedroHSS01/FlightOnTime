@@ -4,8 +4,6 @@ Currently using Pydantic for validation in routes
 This module can be extended for additional custom validation logic
 """
 
-from typing import Dict, Any
-
 
 def validate_airport_code(code: str) -> bool:
     """

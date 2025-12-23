@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.services.ml_client import get_ml_client
+from app.services.ml_client_interface import IMLServiceClient
 from pydantic import BaseModel, Field, ValidationError, field_validator
 import logging
 
@@ -7,8 +8,32 @@ logger = logging.getLogger(__name__)
 
 bp = Blueprint('predictions', __name__)
 
-# Client for external ML service
-ml_client = get_ml_client()
+# Dependency injection - can be replaced for testing
+_ml_client: IMLServiceClient = None
+
+
+def get_client() -> IMLServiceClient:
+    """
+    Get ML client instance (Dependency Injection)
+
+    Allows easy mocking in tests by calling set_client()
+    """
+    global _ml_client
+    if _ml_client is None:
+        _ml_client = get_ml_client()
+    return _ml_client
+
+
+def set_client(client: IMLServiceClient):
+    """
+    Set ML client instance (for testing)
+
+    Usage in tests:
+        from app.routes.prediction_routes import set_client
+        set_client(MockMLClient())
+    """
+    global _ml_client
+    _ml_client = client
 
 
 class FlightPredictionRequest(BaseModel):
@@ -55,7 +80,13 @@ def predict():
 
     try:
         # 1. Receive flight data from Java API
-        flight_data = request.get_json()
+        try:
+            flight_data = request.get_json(force=True)
+        except Exception as json_error:
+            logger.warning(f"Invalid JSON or empty body: {json_error}")
+            return jsonify({
+                "error": "Empty request body"
+            }), 400
 
         if not flight_data:
             return jsonify({
@@ -70,6 +101,7 @@ def predict():
 
         # 3. Forward to external ML service
         logger.info("Forwarding to external ML service...")
+        ml_client = get_client()  # Use dependency injection
         ml_result = ml_client.predict(validated_data.model_dump())
 
         # 4. Map ML service response to Java API format
@@ -111,6 +143,7 @@ def health():
 
     try:
         # Check ML service status
+        ml_client = get_client()  # Use dependency injection
         ml_status = ml_client.health_check()
 
         wrapper_status = "UP" if ml_status.get(
