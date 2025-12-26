@@ -14,6 +14,5 @@ Modelagem: Desenvolvimento e validação de algoritmos de Machine Learning.
 
 /notebooks: Ambientes de experimentação e prototipagem.
 
-/models: Binários dos modelos treinados e serializados (.pkl, .joblib).
+/modelos: Binários dos modelos treinados e serializados (.pkl, .joblib) e aplicação.
 
-/analysis: Relatórios e visualizações geradas.
