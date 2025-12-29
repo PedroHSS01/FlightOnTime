@@ -121,3 +121,39 @@ Arquivos alterados
 - `Modelagem/Modelos/check_model.py` (adicionado)
 - `Modelagem/Modelos/run_predict_debug.py` (adicionado)
 ---
+
+Rodando o container de load-test
+--------------------------------
+
+Há um serviço `load-tester` no `docker-compose.yml` que executa o script `mlwrapper/scripts/load_test.py` dentro de um container Python (sem necessidade de instalar dependências localmente).
+
+Exemplos de uso (PowerShell):
+
+1) Subir serviços necessários e rodar o tester isoladamente:
+
+```powershell
+docker-compose up -d modelos-ml ml-wrapper fot-api
+docker-compose run --rm load-tester
+```
+
+2) Rodar via profile de testes (inicia containers do profile e para quando o tester terminar):
+
+```powershell
+docker-compose --profile test up --abort-on-container-exit load-tester
+```
+
+3) Para passar argumentos distintos ao script (por exemplo alterar número de requisições):
+
+```powershell
+docker-compose run --rm load-tester python scripts/load_test.py --url http://fot-api:8080/api/v1/predict -n 200 --concurrency 10 --output results.json
+```
+
+Onde os resultados ficam
+------------------------
+
+O `load-tester` monta `./mlwrapper` em `/app`, então o arquivo de saída `results.json` será escrito em `mlwrapper/results.json` no host.
+
+Observações
+-----------
+- O `load-tester` roda dentro do container e instala dependências via `pip` no container, portanto não afeta o ambiente Python local.
+- Ajuste a URL para apontar para outro serviço se necessário (por exemplo `http://localhost:8080/api/v1/predict` quando não usar rede de containers).
