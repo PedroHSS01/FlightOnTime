@@ -33,7 +33,8 @@ class MLServiceClient(IMLServiceClient):
         retry_strategy = Retry(
             total=3,  # Total retry attempts
             backoff_factor=1,  # Wait 1, 2, 4 seconds between retries
-            status_forcelist=[429, 500, 502, 503, 504],  # Retry on these HTTP codes
+            # Retry on these HTTP codes
+            status_forcelist=[429, 500, 502, 503, 504],
             allowed_methods=["POST", "GET"]
         )
         adapter = HTTPAdapter(max_retries=retry_strategy)
@@ -77,10 +78,21 @@ class MLServiceClient(IMLServiceClient):
             # Track performance
             start_time = time.time()
 
+            # Prepare payload expected by the external ML service
+            # Map Java API field names -> ML service (Portuguese) field names
+            ml_payload = {
+                'companhia': flight_data.get('companyName'),
+                'origem': flight_data.get('flightOrigin'),
+                'destino': flight_data.get('flightDestination'),
+                'data_partida': flight_data.get('flightDepartureDate'),
+                # include distance if available (model may ignore)
+                'nr_assentos_ofertados': flight_data.get('flightDistance')
+            }
+
             # Make HTTP POST request to ML service with retry
             response = self.session.post(
                 self.ml_service_url,
-                json=flight_data,
+                json=ml_payload,
                 headers={'Content-Type': 'application/json'},
                 timeout=self.timeout
             )
@@ -104,7 +116,8 @@ class MLServiceClient(IMLServiceClient):
             return result
 
         except requests.exceptions.Timeout:
-            logger.error(f"Timeout connecting to ML service after {self.timeout}s")
+            logger.error(
+                f"Timeout connecting to ML service after {self.timeout}s")
             raise MLServiceTimeoutError()
 
         except requests.exceptions.ConnectionError as e:

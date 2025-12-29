@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # Flask ML Wrapper - Integration layer between Java API and ML Service
   ml-wrapper:
     build:
       context: ./mlwrapper
@@ -9,14 +8,31 @@ services:
     container_name: ml-wrapper
     restart: unless-stopped
     ports:
-      - "5000:5000"
+      - "5001:5000"
     environment:
       - FLASK_ENV=production
       - FLASK_DEBUG=False
       - PORT=5000
-      - ML_SERVICE_URL=http://ml-service:8000/predict
+      - ML_SERVICE_URL=http://modelos-ml:5000/predict
       - ML_SERVICE_TIMEOUT=30
       - LOG_LEVEL=INFO
+    networks:
+      - fot-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:5000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  modelos-ml:
+    build:
+      context: ./Modelagem/Modelos
+      dockerfile: Dockerfile
+    container_name: modelos-ml
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
     networks:
       - fot-network
     healthcheck:
@@ -83,6 +99,21 @@ services:
     container_name: ml-wrapper-tests
     working_dir: /app
     command: pytest -v
+    networks:
+      - fot-network
+    profiles:
+      - test
+
+  # Load tester (runs the load_test.py script inside a Python container)
+  load-tester:
+    image: python:3.11-slim
+    container_name: load-tester
+    working_dir: /app
+    volumes:
+      - ./mlwrapper:/app
+    depends_on:
+      - fot-api
+    command: sh -c "pip install --no-cache-dir -r requirements.txt && python scripts/load_test.py --url http://fot-api:8080/api/v1/predict -n 50 --concurrency 5 --output results.json"
     networks:
       - fot-network
     profiles:
