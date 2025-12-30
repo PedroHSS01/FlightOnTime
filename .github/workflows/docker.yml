@@ -52,7 +52,7 @@ jobs:
       - name: Check services health
         run: |
           echo "🔍 Checking fot-api health..."
-          curl -f http://localhost:8080/actuator/health || exit 1
+          curl -f http://localhost:8080/api/v1/health || exit 1
           
           echo "🔍 Checking ml-wrapper health..."
           curl -f http://localhost:5000/health || exit 1
@@ -63,7 +63,7 @@ jobs:
       - name: Test API endpoint
         run: |
           echo "🧪 Testing flight prediction endpoint..."
-          curl -X POST http://localhost:8080/api/flights/predict \
+          curl -X POST http://localhost:8080/api/v1/predict \
             -H "Content-Type: application/json" \
             -d '{
               "airline": "AA",
