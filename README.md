@@ -6,7 +6,11 @@
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2.12-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+
+![Tests](https://github.com/Mateus-Redivo/FlightOnTime/actions/workflows/tests.yml/badge.svg)
+![Docker Build](https://github.com/Mateus-Redivo/FlightOnTime/actions/workflows/docker.yml/badge.svg)
 ![Tests](https://img.shields.io/badge/Tests-242%20Passing-success?style=for-the-badge)
+![Oracle Cloud](https://img.shields.io/badge/Oracle%20Cloud-Ready-F80000?style=for-the-badge&logo=oracle&logoColor=white)
 
 **API REST + Machine Learning para prever atrasos de voos**
 
