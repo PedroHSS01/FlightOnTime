@@ -45,7 +45,7 @@ jobs:
       
       - name: Start Docker Compose services
         run: |
-          docker-compose up -d
+          docker compose up -d
           echo "Waiting for services to be healthy..."
           sleep 30
       
@@ -78,11 +78,11 @@ jobs:
         if: always()
         run: |
           echo "📋 Container logs:"
-          docker-compose logs --tail=50
+          docker compose logs --tail=50
       
       - name: Stop services
         if: always()
-        run: docker-compose down -v
+        run: docker compose down -v
   
   docker-summary:
     name: Docker Build Summary
