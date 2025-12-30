@@ -47,15 +47,28 @@ jobs:
         run: |
           docker compose up -d
           echo "Waiting for services to be healthy..."
-          sleep 30
+          sleep 45
+          echo "Checking container status..."
+          docker compose ps
       
       - name: Check services health
         run: |
           echo "🔍 Checking fot-api health..."
           curl -f http://localhost:8080/api/v1/health || exit 1
           
-          echo "🔍 Checking ml-wrapper health..."
-          curl -f http://localhost:5000/health || exit 1
+          echo "🔍 Checking ml-wrapper health (with retries)..."
+          for i in {1..10}; do
+            if curl -f http://localhost:5000/health; then
+              echo "✅ ML Wrapper is healthy!"
+              break
+            fi
+            echo "⏳ Attempt $i/10 failed, waiting 5 seconds..."
+            sleep 5
+            if [ $i -eq 10 ]; then
+              echo "❌ ML Wrapper failed to become healthy"
+              exit 1
+            fi
+          done
           
           echo "🔍 Checking ml-service-mock health..."
           curl -f http://localhost:8000/health || exit 1
