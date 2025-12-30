@@ -46,8 +46,8 @@ model = None
 # Nova lista de colunas reduzida
 COLUNAS_ESPERADAS = [
     'sg_empresa_icao', 
-    'sg_iata_origem',   # Antes era sg_icao_origem
-    'sg_iata_destino',  # Antes era sg_icao_destino
+    'sg_iata_origem',   
+    'sg_iata_destino',
     'dt_partida_prevista'
 ]
 
@@ -64,7 +64,6 @@ def predict():
     global model
     if model is None:
         return jsonify({'message': 'Modelo offline', 'status': 'error'}), 500
-
     try:
         data = request.get_json()
         if not data:
@@ -72,22 +71,20 @@ def predict():
         
         # --- VALIDAÇÃO DOS DADOS ---
         # Verifica se todas as colunas necessárias estão presentes no JSON enviado
+        expected = ['companhia', 'origem', 'destino', 'data_partida']
+
+        missing_input = [k for k in expected if k not in data_json]
+        if missing_input:
+            return jsonify({'status': 'error', 'message': f'Campos faltando na entrada: {missing_input}'}), 400
+
         input_data = {}
-        colunas_faltantes = []
 
-        for col in COLUNAS_ESPERADAS:
-            if col in data:
-                input_data[col] = data[col]
-            else:
-                colunas_faltantes.append(col)
+        # Mapear valores vindos do wrapper/Java para as colunas do Pickle (IATA)
+        dados_modelo['sg_empresa_icao'] = data_json.get('companhia')
+        dados_modelo['sg_iata_origem'] = data_json.get('origem')   # Backend já envia IATA
+        dados_modelo['sg_iata_destino'] = data_json.get('destino')  # Backend já envia IATA
+        dados_modelo['dt_partida_prevista'] = data_json.get('data_partida')
         
-        # Se houver colunas faltando, retorna erro para o usuário
-        if colunas_faltantes:
-            return jsonify({
-                'message': f'Faltando colunas obrigatórias: {colunas_faltantes}', 
-                'status': 'error'
-            }), 400
-
         # Cria o DataFrame apenas com os dados corretos
         df_input = pd.DataFrame([input_data])
         
