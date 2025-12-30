@@ -18,11 +18,11 @@ def predict():
     
     # Generate mock prediction (0 = ON_TIME, 1 = DELAYED)
     prediction = random.choice([0, 1])
-    probability = round(random.uniform(0.6, 0.95), 2)
+    confidence = round(random.uniform(0.6, 0.95), 2)
     
     response = {
         "prediction": prediction,
-        "probability": probability
+        "confidence": confidence  # Changed from 'probability' to 'confidence'
     }
     
     print(f"Mock ML Service - Received: {data.get('flightNumber', 'N/A')}")
