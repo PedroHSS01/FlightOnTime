@@ -115,12 +115,11 @@ def predict():
         traceback.print_exc()
         return jsonify({'message': str(e), 'status': 'error'}), 500
 
-# --- ENDPOINT DE HEALTH CHECK (Necessário para o CI/CD) ---
 @app.route('/health', methods=['GET'])
 def health():
-    if model is None:
-        return jsonify({'status': 'DOWN', 'message': 'Model not loaded'}), 503
-    return jsonify({'status': 'UP', 'message': 'Service is healthy'}), 200
+    status = 'UP' if model_loaded else 'DEGRADED'
+    code = 200 if model_loaded else 503
+    return jsonify({'status': status, 'service': 'modelos-ml', 'model_loaded': model_loaded}), code
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=False)
