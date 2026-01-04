@@ -1,0 +1,156 @@
+{
+	"info": {
+		"_postman_id": "b4c315a4-cab3-4ecc-92d9-8494ca0c9ffb",
+		"name": "FlightOnTime - Hackthon",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "47764357",
+		"_collection_link": "https://telecoms-cosmonaut-15731558-7762523.postman.co/workspace/CAIO-CESAR-FANECO-GONZAGA's-Wor~d31149a2-82c6-47e1-86be-bf00eeb11a5e/collection/47764357-b4c315a4-cab3-4ecc-92d9-8494ca0c9ffb?action=share&source=collection_link&creator=47764357"
+	},
+	"item": [
+		{
+			"name": "Check Health ml-service",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{mlMockUrl}}/health"
+			},
+			"response": []
+		},
+		{
+			"name": "Check Health ml-wrapper",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{mlWrapperUrl}}/health"
+			},
+			"response": []
+		},
+		{
+			"name": "Predict delay",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"try {",
+							"  const days = parseInt(pm.environment.get(\"nowOffsetDays\") || \"1\", 10);",
+							"  const futureIso = new Date(Date.now() + days * 24*3600*1000).toISOString(); // 2025-12-29T22:47:40.840Z",
+							"  const localNoMillis = futureIso.split('.')[0]; // 2025-12-29T22:47:40",
+							"",
+							"  const payload = {",
+							"    flightNumber: \"AZ1234\",",
+							"    companyName: \"AZ\",",
+							"    flightOrigin: \"GIG\",",
+							"    flightDestination: \"GRU\",",
+							"    flightDepartureDate: localNoMillis,",
+							"    flightDistance: 350",
+							"  };",
+							"",
+							"  pm.environment.set(\"predictBody\", JSON.stringify(payload));",
+							"  pm.environment.set(\"departureIso\", localNoMillis);",
+							"",
+							"  const user = pm.environment.get(\"authUser\") || \"\";",
+							"  const pass = pm.environment.get(\"authPass\") || \"\";",
+							"  if (user !== \"\" || pass !== \"\") {",
+							"    const token = btoa(`${user}:${pass}`);",
+							"    try { pm.request.headers.upsert({ key: \"Authorization\", value: `Basic ${token}` }); }",
+							"    catch (e) { pm.request.headers.add({ key: \"Authorization\", value: `Basic ${token}` }); }",
+							"  }",
+							"",
+							"  console.log(\"predictBody:\", pm.environment.get(\"predictBody\"));",
+							"} catch (err) {",
+							"  console.error(\"Pre-request script error:\", err);",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{{predictBody}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{baseUrl}}/api/v1/predict"
+			},
+			"response": []
+		},
+		{
+			"name": "Predict delay (sem pre-script)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"flightNumber\": \"AZ1234\",\n    \"companyName\": \"AZ\",\n    \"flightOrigin\": \"GIG\",\n    \"flightDestination\": \"GRU\",\n    \"flightDepartureDate\": \"2026-06-01T15:30:00\",\n    \"flightDistance\": 350\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{baseUrl}}/api/v1/predict"
+			},
+			"response": []
+		}
+	]
+}

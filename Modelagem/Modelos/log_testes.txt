@@ -1,0 +1,85 @@
+--- TESTE REALIZADO EM: 2025-12-30 17:19:50 ---
+STATUS HTTP: 500
+DADOS ENVIADOS (Input):
+{
+    "sg_empresa_icao": "AZU",
+    "sg_icao_origem": "SBKP",
+    "sg_icao_destino": "SBGR",
+    "dt_partida_prevista": "2026-01-26 11:34:00"
+}
+
+RESPOSTA DA API (Output):
+{
+    "message": "columns are missing: {'sg_iata_origem', 'sg_iata_destino'}",
+    "status": "error"
+}
+========================================
+
+--- TESTE REALIZADO EM: 2025-12-30 17:19:52 ---
+STATUS HTTP: 500
+DADOS ENVIADOS (Input):
+{
+    "sg_empresa_icao": "ACN",
+    "sg_icao_origem": "SBBR",
+    "sg_icao_destino": "SBSP",
+    "dt_partida_prevista": "2026-01-06 12:18:00"
+}
+
+RESPOSTA DA API (Output):
+{
+    "message": "columns are missing: {'sg_iata_origem', 'sg_iata_destino'}",
+    "status": "error"
+}
+========================================
+
+--- TESTE REALIZADO EM: 2025-12-30 17:19:54 ---
+STATUS HTTP: 500
+DADOS ENVIADOS (Input):
+{
+    "sg_empresa_icao": "TAM",
+    "sg_icao_origem": "SBKP",
+    "sg_icao_destino": "SBGR",
+    "dt_partida_prevista": "2025-12-05 21:57:00"
+}
+
+RESPOSTA DA API (Output):
+{
+    "message": "columns are missing: {'sg_iata_origem', 'sg_iata_destino'}",
+    "status": "error"
+}
+========================================
+
+--- TESTE REALIZADO EM: 2025-12-30 17:19:56 ---
+STATUS HTTP: 500
+DADOS ENVIADOS (Input):
+{
+    "sg_empresa_icao": "TAM",
+    "sg_icao_origem": "SBKP",
+    "sg_icao_destino": "SBBR",
+    "dt_partida_prevista": "2025-12-27 02:45:00"
+}
+
+RESPOSTA DA API (Output):
+{
+    "message": "columns are missing: {'sg_iata_origem', 'sg_iata_destino'}",
+    "status": "error"
+}
+========================================
+
+--- TESTE REALIZADO EM: 2025-12-30 17:19:58 ---
+STATUS HTTP: 500
+DADOS ENVIADOS (Input):
+{
+    "sg_empresa_icao": "AZU",
+    "sg_icao_origem": "SBCF",
+    "sg_icao_destino": "SBGR",
+    "dt_partida_prevista": "2025-12-16 16:14:00"
+}
+
+RESPOSTA DA API (Output):
+{
+    "message": "columns are missing: {'sg_iata_origem', 'sg_iata_destino'}",
+    "status": "error"
+}
+========================================
+
