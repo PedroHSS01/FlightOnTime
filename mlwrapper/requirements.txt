@@ -12,7 +12,7 @@ requests==2.31.0
 pydantic==2.5.0
 
 # Servidor de Produção
-gunicorn==21.2.0
+gunicorn==22.0.0
 
 # Testes
 pytest==7.4.3
