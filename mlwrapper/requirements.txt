@@ -6,7 +6,7 @@ Flask-CORS==4.0.0
 python-dotenv==1.0.0
 
 # Cliente HTTP para chamar serviço ML externo
-requests==2.31.0
+requests==2.32.4
 
 # Validação e Serialização
 pydantic==2.5.0
