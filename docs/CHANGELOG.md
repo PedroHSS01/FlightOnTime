@@ -12,6 +12,7 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 ### 🎉 Lançamento Inicial
 
 #### Adicionado
+
 - **API Java Spring Boot** (Porta 8080)
   - Endpoint de predição de atraso de voos (`/api/v1/predict`)
   - Endpoint de verificação de saúde (`/api/v1/health`)
@@ -57,15 +58,18 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
   - Templates de Issues e Pull Requests
 
 #### Alterado
+
 - Formato de resposta do Serviço ML: `probability` renomeado para `confidence` por consistência com o DTO Java
 
 #### Corrigido
+
 - Erro HTTP 500 em `/api/v1/predict` devido a incompatibilidade de nomes de campos
 - Compatibilidade com Docker Compose v2
 - Lógica de retry do health check do ML Wrapper
 - Caminhos corretos de endpoints da API nos workflows
 
 ### 🏗️ Stack Técnico
+
 - Java 17 + Spring Boot 3.2.12
 - Python 3.11 + Flask 3.0
 - Docker + Docker Compose
@@ -74,11 +78,13 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 - GitHub Actions
 
 ### 📊 Cobertura de Testes
+
 - Java: 100% de taxa de sucesso (226/226)
 - Python: 78% de cobertura de código (16/16 testes)
 - Total: 242 testes automatizados
 
 ### 🎯 Pronto para Oracle Cloud
+
 - Arquitetura containerizada
 - Health checks implementados
 - Configuração via variáveis de ambiente
@@ -86,4 +92,4 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 ---
 
-**Changelog Completo**: https://github.com/Mateus-Redivo/FlightOnTime/commits/v1.0.0
+**Changelog Completo**: [https://github.com/Mateus-Redivo/FlightOnTime/commits/v1.0.0](https://github.com/Mateus-Redivo/FlightOnTime/commits/v1.0.0)
