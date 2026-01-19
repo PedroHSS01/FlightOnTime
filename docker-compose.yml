@@ -70,6 +70,8 @@ services:
     restart: unless-stopped
     ports:
       - "3000:80"
+    volumes: 
+      - ./frontend:/usr/share/nginx/html:ro
     depends_on:
       - fot-api
     networks:

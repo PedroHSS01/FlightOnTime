@@ -2,7 +2,7 @@
 
 Este projeto consiste em uma API REST desenvolvida em **Python** com **Flask**, que utiliza um modelo de Machine Learning (**Random Forest**) para prever a probabilidade de atraso de voos comerciais no Brasil.
 
-A aplicação recebe dados do voo (companhia aérea, origem, destino, data/hora) e retorna se o voo está previsto para chegar "NO HORÁRIO" ou "ATRASADO", junto com a probabilidade calculada.
+A aplicação recebe dados do voo (companhia aérea, origem, destino, data/hora e distância) e retorna se o voo está previsto para chegar "NO HORÁRIO" ou "ATRASADO", junto com a probabilidade calculada.
 
 ---
 

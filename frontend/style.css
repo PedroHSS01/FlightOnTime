@@ -332,3 +332,23 @@ footer {
     color: var(--text-muted);
     font-size: 0.85rem;
 }
+
+/* ==========================================================================
+   7. BACKGROUND DE AVIÃO
+   ========================================================================== */
+
+main::before {
+    content: '';
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url(/images/pexels-brett-sayles-1059608.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.3;
+    z-index: -1;
+    pointer-events: none;
+}
