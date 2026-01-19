@@ -145,7 +145,7 @@ class FlightPredictionRequestDTOTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"AA", "A123", "1234", "AAAA1234", "aa1234", "AA12345", "A-123"})
+        @ValueSource(strings = {"AA", "1234" , "A123", "AAAA1234", "aa1234", "AA12345"})
         @DisplayName("Should reject invalid flight number format")
         void shouldRejectInvalidFlightNumberFormat(String flightNumber) {
             // Arrange
@@ -163,7 +163,7 @@ class FlightPredictionRequestDTOTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"AA1", "BA99", "LH456", "AZ1234", "TAP999", "AAA9999"})
+        @ValueSource(strings = {"AA1", "BA99", "LH456", "AZ1234", "TAP999", "AAA9999", "G31234", "2Z5678", "JJ123", "AD9999"})
         @DisplayName("Should accept valid flight numbers")
         void shouldAcceptValidFlightNumbers(String flightNumber) {
             // Arrange
@@ -202,7 +202,7 @@ class FlightPredictionRequestDTOTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"A", "AAAA", "a1", "1A", "A-B"})
+        @ValueSource(strings = {"A", "AAAA", "a1", "1a", "A-B", "AB-", "12"})
         @DisplayName("Should reject invalid airline code format")
         void shouldRejectInvalidAirlineCodeFormat(String companyName) {
             // Arrange
@@ -218,7 +218,7 @@ class FlightPredictionRequestDTOTest {
         }
 
         @ParameterizedTest
-        @ValueSource(strings = {"AA", "BA", "AZ", "TAP", "LH"})
+        @ValueSource(strings = {"AA", "BA", "AZ", "TAP", "LH", "G3", "2Z", "JJ", "P3", "LA", "AD"})
         @DisplayName("Should accept valid airline codes")
         void shouldAcceptValidAirlineCodes(String companyName) {
             // Arrange

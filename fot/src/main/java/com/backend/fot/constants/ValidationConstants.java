@@ -22,17 +22,21 @@ public final class ValidationConstants {
 
     /**
      * Pattern for flight number validation.
-     * Format: 2-3 uppercase letters/digits (airline code) + 1-4 digits (flight number)
-     * Examples: AA1234, BA101, LH456, G31234
+     * Format: 
+     * - 2-3 uppercase letters + 1-4 digits (e.g., AA1234, TAP999), OR
+     * - 1 letter + 1 digit + 3-4 digits (e.g., G31234), OR  
+     * - 1 digit + 1 letter + 3-4 digits (e.g., 2Z5678)
+     * This ensures unambiguous parsing of airline code vs flight number.
      */
-    public static final String FLIGHT_NUMBER_PATTERN = "^[A-Z0-9]{2,3}\\d{1,4}$";
+    public static final String FLIGHT_NUMBER_PATTERN = "^([A-Z]{2,3}[0-9]{1,4}|[A-Z][0-9][0-9]{3,4}|[0-9][A-Z][0-9]{3,4})$";
 
     /**
      * Pattern for airline IATA code validation.
-     * Format: 2-3 uppercase letters or alphanumeric characters
-     * Examples: AA, BA, AZ, LH, G3 (GOL)
+     * Format: 2-3 uppercase letters or alphanumeric characters (must contain at least one letter)
+     * Examples: AA, BA, AZ, LH, G3 (GOL), 2Z
+     * Cannot be only digits (e.g., "12" is invalid)
      */
-    public static final String AIRLINE_CODE_PATTERN = "^[A-Z0-9]{2,3}$";
+    public static final String AIRLINE_CODE_PATTERN = "^(?=.*[A-Z])[A-Z0-9]{2,3}$";
 
     /**
      * Pattern for airport IATA code validation.

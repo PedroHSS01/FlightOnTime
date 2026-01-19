@@ -79,16 +79,20 @@ class TestValidateAirlineCode:
     """Unit tests for validate_airline_code function."""
 
     @pytest.mark.parametrize("valid_code", [
-        "AZ",  # Azul
+        "AD",  # Azul
         "LA",  # LATAM
+        "G3",  # GOL (alphanumeric)
+        "2Z",  # Voepass (alphanumeric)
         "AA",  # American Airlines
         "UA",  # United Airlines
         "BA",  # British Airways
         "AF",  # Air France
+        "JJ",  # LATAM Brasil (TAM)
+        "TAP", # TAP (3 letters)
     ])
     def test_validate_airline_code_valid_codes_returns_true(self, valid_code: str):
         """
-        Given: A valid IATA 2-letter uppercase airline code
+        Given: A valid IATA 2-3 character uppercase airline code (letters or alphanumeric)
         When: validate_airline_code is called
         Then: Should return True
         """
@@ -101,11 +105,12 @@ class TestValidateAirlineCode:
     @pytest.mark.parametrize("invalid_code,reason", [
         ("", "empty string"),
         ("A", "only 1 character"),
-        ("ABC", "3 characters instead of 2"),
-        ("12", "numeric characters"),
+        ("ABCD", "4 characters (too long)"),
         ("az", "lowercase letters"),
         ("Az", "mixed case"),
-        ("A1", "contains number"),
+        ("a3", "lowercase with number"),
+        ("A-B", "special character"),
+        ("AB ", "contains space"),
         (None, "None value"),
     ])
     def test_validate_airline_code_invalid_codes_returns_false(
